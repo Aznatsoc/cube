@@ -10,7 +10,6 @@
 using namespace std;
 namespace cube
 {
-	//class Ghost;
 	class FireRoom : public Room{
 		private:
 			int heat;

@@ -1,17 +1,32 @@
 #include "room.h"
 
 using namespace std;
-
 namespace cube
 {
-	vector<int> Room::directions(){
+    Room::Room(){
+        
+    }
+    
+	vector<unsigned int> Room::directions(){
 		return m_directions;
 	};
 
-	Room* Room::neighbour(int direction){
+	Room* Room::neighbour(unsigned int direction){
 		return NULL;
 	};
 	
+	void Room::add_neighbour(unsigned int direction, Room* r){
+		m_neighbours[direction] = r;
+        m_directions.push_back(direction);
+	};
+
+    void Room::get_neighbours(){
+        std::map<unsigned int,Room*>::iterator it = m_neighbours.begin();
+        for (it=m_neighbours.begin(); it!=m_neighbours.end(); ++it)
+            std::cout << it->first << '\n';
+
+    };
+    
 	string Room::description(){
 		return m_description;
 	};

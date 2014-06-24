@@ -9,28 +9,35 @@
 #include <vector>
 #include <map>
 
+using namespace std;
 namespace cube
 {
 	class Room{
 	protected:
-	    std::string m_description;
-	    std::map<std::string, Character*> m_characters;
-	    std::map<std::string, Item*> m_items;
-	    std::map<int, Room*> m_neighbours;
-	    std::vector<int> m_directions;
+	    string m_description;
+	    map<string, Character*> m_characters;
+	    map<string, Item*> m_items;
+	    map<unsigned int, Room*> m_neighbours;
+	    vector<unsigned int> m_directions;
 
 	public:
+        Room();
 		~Room(){};
-		std::vector<int> directions();
-		Room* neighbour(int direction);
-		
-		std::string description();
+		string description();
 
-		bool enter(Character* c);
+		vector<unsigned int> directions();
+		Room* neighbour(unsigned int direction);
+		void add_neighbour(unsigned int direction, Room* r);
+        //TODO remove
+        void get_neighbours();
+		
+        bool enter(Character* c);
 		bool leave(Character* c);
 
-		bool pick_up(std::string item);
+		bool pick_up(string item);
 		bool drop(Item& it);
+
+		//virtual void rotate() = 0;
 	};
 }
 #endif

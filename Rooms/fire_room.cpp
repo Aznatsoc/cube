@@ -4,7 +4,7 @@ using namespace std;
 
 namespace cube
 {
-	Fire::Fire(){
+	FireRoom::FireRoom(){
 		m_description = "Fire room";
 	};
 }
