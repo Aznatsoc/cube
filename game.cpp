@@ -14,7 +14,9 @@ namespace cube
 	};
 
 	void Game::play(){
-		std::cout << "YOU ARE PLAYING";
+		std::cout << "YOU ARE PLAYING" << std::endl;
+		Fire f;
+		std::cout <<  f.description()  << std::endl;
 	};
 
 	void Game::setup(){

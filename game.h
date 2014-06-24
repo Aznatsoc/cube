@@ -3,7 +3,7 @@
 
 
 
-//#include "room.h"
+#include "Rooms/fire.h"
 #include <iostream>
 #include <vector>
 namespace cube
