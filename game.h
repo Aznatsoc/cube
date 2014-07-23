@@ -4,6 +4,7 @@
 
 
 #include "Rooms/fire_room.h"
+#include "Character/character.h"
 #include <iostream>
 #include <vector>
 namespace cube
@@ -14,6 +15,7 @@ namespace cube
 		bool finished();
 		bool processCommand();
         vector<Room*> cube;
+        Character* player;
         
 		public:
 			Game();

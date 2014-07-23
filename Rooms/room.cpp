@@ -12,23 +12,20 @@ namespace cube
 	};
 
 	Room* Room::neighbour(unsigned int direction){
-		return NULL;
+		return m_neighbours[direction];
 	};
 	
 	void Room::add_neighbour(unsigned int direction, Room* r){
 		m_neighbours[direction] = r;
         m_directions.push_back(direction);
 	};
-
-    void Room::get_neighbours(){
-        std::map<unsigned int,Room*>::iterator it = m_neighbours.begin();
-        for (it=m_neighbours.begin(); it!=m_neighbours.end(); ++it)
-            std::cout << it->first << '\n';
-
-    };
     
 	string Room::description(){
-		return m_description;
+        string doors = "";
+        for (int i = 0; i < m_doors.size(); ++i) {
+            doors += to_string(m_doors[i]) + ", ";
+        }
+		return m_description + doors;
 	};
 
 	bool Room::enter(Character* c){
@@ -44,4 +41,10 @@ namespace cube
 	bool Room::drop(Item& it){
 		return false;
 	};
+    
+    void Room::rotate(){
+        for(int i = 0; i < m_doors.size(); ++i){
+            m_doors[i] = (m_doors[i]+1)%6;
+        }
+    };
 }

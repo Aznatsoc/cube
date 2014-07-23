@@ -21,7 +21,6 @@ int main(){
 
 
 	Game g;
-	g.play();
     
     vector<Room*> cube = g.get_cube();
     cout << "TESTGAME::" << endl;

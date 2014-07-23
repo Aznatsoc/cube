@@ -15,6 +15,8 @@ namespace cube
 			int heat;
 		public:
 			FireRoom();
+            FireRoom(string name);
+            void rotate();
 	};
 }
 #endif
