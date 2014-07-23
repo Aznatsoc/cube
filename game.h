@@ -3,10 +3,13 @@
 
 
 
-#include "Rooms/fire_room.h"
-#include "Character/character.h"
+#include "fire_room.h"
+//#include "character.h"
 #include <iostream>
 #include <vector>
+#include <string>
+#include <map>
+
 namespace cube
 {
 	class Game{
@@ -16,6 +19,8 @@ namespace cube
 		bool processCommand();
         vector<Room*> cube;
         Character* player;
+        std::map<std::string, unsigned int> directions;
+
         
 		public:
 			Game();
