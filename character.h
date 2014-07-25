@@ -4,7 +4,7 @@
 #include <string>
 #include <map>
 #include <iostream>
-#include <math.h>        // std::abs not fucking working
+#include <math.h>        
 #include "room.h"
 #include <vector>
 #include <algorithm>

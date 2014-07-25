@@ -4,7 +4,12 @@
 
 
 #include "fire_room.h"
+#include "earth_room.h"
+#include "air_room.h"
+#include "water_room.h"
+#include "normal_room.h"
 //#include "character.h"
+#include "item.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -16,10 +21,10 @@ namespace cube
 		void setup();
         void setup_cube_structure();
 		bool finished();
-		bool processCommand();
+        vector<string>  processCommand();
         vector<Room*> cube;
         Character* player;
-        std::map<std::string, unsigned int> directions;
+        std::map<std::string, int> directions;
 
         
 		public:
@@ -27,6 +32,7 @@ namespace cube
 			~Game();
 			void play();
             vector<Room*> get_cube();
+            Character* get_player();
 	};
 }
 #endif

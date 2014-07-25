@@ -5,13 +5,11 @@ namespace cube
 {
 enum Directions{
 	RIGHT, //0
-	BACK, //1
-	LEFT, //2
-	FORWARD, //3
-    DUMMY2,
-    DUMMY3,
-	UP, //6
-	DOWN //7
+	UP, //1
+	FORWARD, //2
+	LEFT, //3
+	DOWN, //4
+    BACK //5
 } ;
 
 }

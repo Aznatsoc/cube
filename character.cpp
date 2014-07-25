@@ -52,18 +52,17 @@ namespace cube
 
 	bool Character::go(int exit){
         //check that exit is in valid doors
-        const vector<unsigned int> valid_doors = this->current_room()->doors();
+        const vector<int> valid_doors = this->current_room()->doors();
         if(std::find(valid_doors.begin(), valid_doors.end(), exit) != valid_doors.end()) {
             //If next_room is not a neighbour return can't go ???? really
-            const vector<unsigned int> valid_neighbours = this->current_room()->room_neighbour_id();
+            const vector<int> valid_neighbours = this->current_room()->room_neighbour_id();
             if(std::find(valid_neighbours.begin(), valid_neighbours.end(), exit) != valid_neighbours.end()) {
                 //retrieve next_room to where exit points to.
                 Room* next_room = this->current_room()->neighbour(exit);
-                vector<unsigned int> next_rooms_doors = next_room->doors();
-                for(int i = 0; i < next_rooms_doors.size(); ++i){
-                    cout << "ZEEEBRA next rooms door points to: " << next_rooms_doors[i] << ", this exit are: " << exit << ", "<< abs((int)next_rooms_doors[i]-(int)exit) << endl;
-                    
-                    if(abs((int)next_rooms_doors[i]-(int)exit) == 2){
+                vector<int> next_rooms_doors = next_room->doors();
+                for(int i = 0; i < (int)next_rooms_doors.size(); ++i){
+                   // cout << "APAN: nextRoomsDoors: " << next_rooms_doors[i] << ", exit: " << exit << ", abs " << abs((int)next_rooms_doors[i]-(int)exit) << endl;
+                    if(abs((int)next_rooms_doors[i]-(int)exit) == 3){
                         bool entered = next_room->enter(this);
                         bool left = this->current_room()->leave(this);
                         if(entered && left){

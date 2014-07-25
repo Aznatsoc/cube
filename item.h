@@ -2,15 +2,21 @@
 #define ITEM_H_
 
 #include <iostream>
-#include <vector>
+#include <string>
+
+using namespace std;
 namespace cube
 {
 	class Item{
-	private:
-	    
+        protected:
+            string m_name;
 
-	public:
+        public:
+            Item();
+            Item(string name);
+            ~Item();
+            string name() const;
 		
-	};
+    };
 }
 #endif

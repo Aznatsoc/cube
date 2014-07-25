@@ -16,7 +16,8 @@ namespace cube
 		public:
 			FireRoom();
             FireRoom(string name);
-            void rotate();
+            //void rotate();
+            void action(Character* c);
 	};
 }
 #endif
