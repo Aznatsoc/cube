@@ -9,12 +9,17 @@ The cube is build on 4 earth rooms, 4 fire rooms, 4 air rooms, 4 water rooms. Th
 Each rooms has the same neighbours through out the game. However, the doors of the room can be rotated so outher rooms can be accessed. 
 Each sub-room has different properties and different amount of doors.
 
--rooms.cpp
---fire_room.cpp
---earth_room.cpp
---air_room.cpp
---water_room.cpp
---ordinary_room.cpp
+	-rooms.cpp:
+		
+		--fire_room.cpp
+
+		--earth_room.cpp
+
+		--air_room.cpp
+
+		--water_room.cpp
+
+		--ordinary_room.cpp
 
 ====
 Characters
@@ -60,8 +65,9 @@ Items that will be available soon:
 ====
 Actions available:
 
-- rotate -- rotates the doors of the room in a specified direction.
-- go -- moves the player in a specified direction, and changing room if allowed.
+	- rotate -- rotates the doors of the room in a specified direction.
+	
+	- go -- moves the player in a specified direction, and changing room if allowed.
 
 Actions that will be available soon:
 	
