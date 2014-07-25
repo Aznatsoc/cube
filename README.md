@@ -20,12 +20,16 @@ Each sub-room has different properties and different amount of doors.
 Characters
 
 Characters that will be available soon:
+	
 	- fire-characters:
 		- fire-eaters
+
 	- earth-characters:
 		- neanderthals
+
 	- air-characters:
 		- aviators
+
 	-water-characters:
 		- mermaids
 	
@@ -40,12 +44,16 @@ Characters that will be available soon:
 Items
 
 Items that will be available soon:
+	
 	- fire_items:
 		- matches
+	
 	- earth_items:
 		- seeds
+	
 	- air_items:
 		- feather
+	
 	-water_items:
 		- bubbles
 
@@ -56,7 +64,11 @@ Actions available:
 - go -- moves the player in a specified direction, and changing room if allowed.
 
 Actions that will be available soon:
+	
 	- pickup -- pickup an item from the current room and store in your backpack
+	
 	- drop -- drops an item from your backpack into the current room
+	
 	- use -- Use an item...
+	
 	- talk -- Talk spells or something you have learned to create and merge items
