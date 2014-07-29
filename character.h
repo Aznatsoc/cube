@@ -8,7 +8,7 @@
 #include "room.h"
 #include <vector>
 #include <algorithm>
-//#include "item.h"
+#include "item.h"
 
 
 using namespace std;
@@ -21,7 +21,7 @@ namespace cube
 		protected: //private?
 			string m_name;
 			int m_item_capacity;
-		//	map<string, Item*> m_item_container;
+			map<string, Item*> m_item_container;
 			int m_life;
 			string m_type;
 			Room* m_current_room;
@@ -35,10 +35,12 @@ namespace cube
             Room* current_room();
 			int container_size() const;
 			int container_capacity() const;
-//            
-//            bool pick_up(Item& item);
-//			bool drop(Item& item);
+        
+            bool add_item(Item* item);
+			Item* remove_item(string item_name);
 			bool go(int direction);
+        
+            string backpack_description();
 
 			//virtual bool action() = 0; //aktörens tur att agera
 	};

@@ -33,8 +33,9 @@ namespace cube
         
         std::string items = "\nThe Items you've got are: ";
         std::map<string,Item*>::iterator it = m_items.begin();
-        for (it=m_items.begin(); it!=m_items.end(); ++it)
+        for (it=m_items.begin(); it!=m_items.end(); ++it){
             items += it->first + ", ";
+        }
         return m_description + doors + items;
 	};
     
@@ -68,13 +69,13 @@ namespace cube
         //return false;
     };
     
-//    Item* Room::remove_item(string item){
-//        
-//        std::map<string, Item*>::iterator it = m_items.find(item);
-//        Item* return_value = it->second;
-//        m_items.erase(it);
-//        return return_value;
-//    }
+    Item* Room::remove_item(string item){
+        cout << "remove item " << item <<endl;
+        std::map<string, Item*>::iterator it = m_items.find(item);
+        Item* return_value = it->second;
+        m_items.erase(it);
+        return return_value;
+    }
 
     void Room::rotate(int direction){
         //TODO, each room will rotate differently to give maximum confusion

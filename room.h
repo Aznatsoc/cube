@@ -40,7 +40,7 @@ namespace cube
 		bool leave(Character* c);
 
         bool add_item(Item* item);
-		//Item* remove_item(string item);
+		Item* remove_item(string item);
 
 		void rotate(int direction);
         virtual void action(Character* c) = 0;

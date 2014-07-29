@@ -34,60 +34,104 @@ namespace cube
 	};
 
 	void Game::play(){
+        is_finished = false;
+        is_exit = false;
+        while(!is_finished || !is_exit){
+            Room* tmp_room =player->current_room();
+            string tmp_str = tmp_room->description();
+            cout << "You are in room: " << tmp_str <<endl;
+            
+            processCommand(); // Create vector to hold our words
+        
+            if (tokens.size() < 1) {
+                continue;
+            }
+            pfunc f = commands[tokens[0]]; //todo check that it is a valid command
+            (this->*f)();
+        }
+	};
+    
+    void Game::exit(){
+        cout << "exit function are called"<<endl;
+        is_exit = true;
+    }
+    
+    void Game::drop(){
+        cout << "drop function are called"<<endl;
+        if (validate_if_next_argument()) {
+            Item* item = player->remove_item(tokens[1]);
+            //todo check items not in backpack
+            player->current_room()->add_item(item);
+            cout << player->backpack_description()<<endl;
+        }else{
+            cout << "You need to specify what object to drop" << endl;
+        }
+    }
+    
+    void Game::pickup(){
+        cout << "pickup function are called"<<endl;
+        if (validate_if_next_argument()) {
+            Item* item = player->current_room()->remove_item(tokens[1]);
+            //todo pickup items not in room
+            player->add_item(item);
+            cout << player->backpack_description()<<endl;
+        }else{
+            cout << "You need to specify what object to pickup" << endl;
+        }
+
+    }
+    
+    void Game::rotate(){
+        cout << "rotate function are called"<<endl;
+        if (validate_if_next_argument()) {
+            map<string, int>::iterator direction_it = directions.find(tokens[1]);
+            if(direction_it != directions.end()){
+                int dir = direction_it->second;
+                player->current_room()->rotate(dir);
+            }else{
+                cout << "The direction you are trying to rotate in does not exist, misspelled?" << endl;
+            }
+        }else{
+            cout << "Rotate demands a direction too, please try again!" << endl;
+        }
+
+    }
+    
+    void Game::go(){
+        cout << "go function are called"<<endl;
+        if (validate_if_next_argument()) {
+            map<string, int>::iterator direction_it = directions.find(tokens[1]);
+            if(direction_it != directions.end()){
+                int dir = direction_it->second;
+                player->go(dir);
+            }else{
+                cout << "The direction you are trying to enter does not exist, misspelled?" << endl;
+            }
+        }else{
+            cout << "go demands a direction too, please try again!" << endl;
+        }
+    }
+    
+    bool Game::validate_if_next_argument(){
+        return (tokens.size() == 2);
+    }
+
+	void Game::setup(){
+        setup_cube_structure();
+        //items
+        setup_items();
+        //characters
         Room* currentRoom = cube[0]; //start game in this room
         player = new Character("Bengan", currentRoom); // TODO ask name and stuff
         cout<< "before enter room" << endl;
         currentRoom->enter(player);
         
-        bool finished = false;
-        
-        // pickup *item -> remove_item from room and put in backback
-        // drop *item -> remove_item from backpack and put in current room
-        while(finished != true){
-            Room* tmp_room =player->current_room();
-            string tmp_str = tmp_room->description();
-            cout << "You are in room: " << tmp_str <<endl;
-            vector<string> tokens = processCommand(); // Create vector to hold our words
-        
-            if (tokens.size() < 1) {
-                continue;
-            }
-            if(tokens[0] == "rotate"){
-                if (tokens.size() == 2) {
-                    map<string, int>::iterator direction_it = directions.find(tokens[1]);
-                    if(direction_it != directions.end()){
-                        int dir = direction_it->second;
-                        player->current_room()->rotate(dir);
-                    }else{
-                        cout << "The direction you are trying to rotate in does not exist, misspelled?" << endl;
-                    }
-                }else{
-                    cout << "Rotate demands a direction too, please try again!" << endl;
-                }
-                
-            }else if(tokens[0] == "exit"){
-                finished = true;
-            }else if(tokens[0] == "go"){
-                if (tokens.size() == 2) {
-                    //TODO looks awfully similar to 'rotate'
-                    map<string, int>::iterator direction_it = directions.find(tokens[1]);
-                    if(direction_it != directions.end()){
-                        int dir = direction_it->second;
-                        player->go(dir);
-                    }else{
-                        cout << "The direction you are trying to enter does not exist, misspelled?" << endl;
-                    }
-                }else{
-                    cout << "go demands a direction too, please try again!" << endl;
-                }
-            }
-        }
-	};
+        commands["exit"] = &Game::exit;
+        commands["drop"] = &Game::drop;
+        commands["pickup"] = &Game::pickup;
+        commands["rotate"] = &Game::rotate;
+        commands["go"] = &Game::go;
 
-	void Game::setup(){
-        setup_cube_structure();
-        //items
-        //characters
     };
     
     void Game::setup_cube_structure(){
@@ -140,6 +184,9 @@ namespace cube
             }
         }
         cube = rooms;
+    }
+    
+    void Game::setup_items(){
         cout << "Before itemz"<< endl;
         Item *item = new Item("ax");
         cube[0]->add_item(item);
@@ -156,8 +203,8 @@ namespace cube
 		return false;
 	};
     
-    vector<string>  Game::processCommand(){
-         vector<string> tokens;
+    void Game::processCommand(){
+         vector<string> tmp_tokens;
          std::string input;
          std::getline(std::cin, input);
          
@@ -165,9 +212,9 @@ namespace cube
          std::string token;
          while(std::getline(ss, token, ' '))
          {
-             tokens.push_back(token);
+             tmp_tokens.push_back(token);
          }
 
-		return tokens;
+		tokens = tmp_tokens;
 	};
 }

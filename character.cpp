@@ -8,6 +8,7 @@ namespace cube
     Character::Character(string name, Room *current_room){
         m_name = name;
         m_current_room = current_room;
+        m_item_capacity = 5;
     }
     
 	string Character::name() const{
@@ -23,28 +24,38 @@ namespace cube
     }
 
 	int Character::container_size() const{
-		//return m_item_container.size();
-        return -1;
+		return m_item_container.size();
 	};
 
 	int Character::container_capacity() const{
-		//return m_item_capacity;
-        return -1;
+        return m_item_capacity;
 	};
-	
-	/*bool Character::pick_up(Item& item){
+    
+    string Character::backpack_description(){
+        std::string items = "\nThe Items in your backpack are: ";
+        std::map<string,Item*>::iterator it = m_item_container.begin();
+        for (it=m_item_container.begin(); it!=m_item_container.end(); ++it){
+            items += it->first + ", ";
+        }
+        return items;
+    }
+    
+	bool Character::add_item(Item* item){
 		if(container_size() < container_capacity()){
-			m_item_container.insert(pair<string, Item*>(item.name(), &item));
-			return true;
+            pair<std::map<string,Item*>::iterator,bool> ret;
+			ret = m_item_container.insert(pair<string, Item*>(item->name(), item));
+			return ret.second;
 		}
 		return false;
 	};
 	
-	bool Character::drop(Item& item){
-		//Remove from container
-		return false;
+	Item* Character::remove_item(string item){
+        std::map<string, Item*>::iterator it = m_item_container.find(item);
+        Item* return_value = it->second;
+        m_item_container.erase(it);
+        return return_value;
 	};
-*/
+
     void Character::change_room(Room *next_room){
         m_current_room = next_room;
     };
