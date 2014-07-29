@@ -34,9 +34,9 @@ namespace cube
 	};
 
 	void Game::play(){
-        is_finished = false;
+        has_fifth_element = false;
         is_exit = false;
-        while(!is_finished || !is_exit){
+        while(!finished() && !is_exit){
             Room* tmp_room =player->current_room();
             string tmp_str = tmp_room->description();
             cout << "You are in room: " << tmp_str <<endl;
@@ -52,7 +52,7 @@ namespace cube
 	};
     
     void Game::exit(){
-        cout << "exit function are called"<<endl;
+        cout << "Thanks for playing!"<<endl;
         is_exit = true;
     }
     
@@ -112,6 +112,29 @@ namespace cube
         }
     }
     
+    void Game::use(){
+        if (validate_if_next_argument()) {
+            Item* item = player->remove_item(tokens[1]);
+            if(item->name() == "seeds" && player->current_room()->what_type_of_room() == "earth"){
+                Item* tree = new Item("tree");
+                player->current_room()->add_item(tree);
+                cout << "You have planted a tree in this room"<<endl;
+                delete item;
+            }
+            else if(item->name() == "seeds" && player->current_room()->what_type_of_room() == "normal"){
+                Item* tree = new Item("fifth_element");
+                player->current_room()->add_item(tree);
+                cout << "You have created the fifth_element"<<endl;
+                delete item;
+            }
+            else if(item->name() == "fifth_element"){
+                has_fifth_element = true;
+            }
+            //stuff should happen
+        }else{
+            cout << "use demands an item to be used, please specify!" << endl;
+        }
+    }
     bool Game::validate_if_next_argument(){
         return (tokens.size() == 2);
     }
@@ -120,6 +143,7 @@ namespace cube
         setup_cube_structure();
         //items
         setup_items();
+        setup_characters();
         //characters
         Room* currentRoom = cube[0]; //start game in this room
         player = new Character("Bengan", currentRoom); // TODO ask name and stuff
@@ -131,6 +155,7 @@ namespace cube
         commands["pickup"] = &Game::pickup;
         commands["rotate"] = &Game::rotate;
         commands["go"] = &Game::go;
+        commands["use"] = &Game::use;
 
     };
     
@@ -188,10 +213,15 @@ namespace cube
     
     void Game::setup_items(){
         cout << "Before itemz"<< endl;
-        Item *item = new Item("ax");
+        Item *item = new Item("seeds");
         cube[0]->add_item(item);
     }
     
+    void Game::setup_characters(){
+        cout << "Before characters" << endl;
+        Character *casper = new Character("casper", cube[0]);
+        cube[0]->enter(casper);
+    }
     vector<Room*> Game::get_cube(){
         return cube;
     };
@@ -200,7 +230,11 @@ namespace cube
         return player;
     }
 	bool Game::finished(){
-		return false;
+        if(player->current_room()->what_type_of_room() == "normal" && has_fifth_element){
+            cout << "You won the game!!!" << endl;
+            return true;
+        }
+        return false;
 	};
     
     void Game::processCommand(){
@@ -218,3 +252,4 @@ namespace cube
 		tokens = tmp_tokens;
 	};
 }
+

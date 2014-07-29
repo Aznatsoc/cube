@@ -26,6 +26,8 @@ namespace cube
             EarthRoom(string name);
             //void rotate();
         void action(Character* c);
+        void item_impact(string item);
+        
 	};
 }
 

@@ -18,6 +18,7 @@ namespace cube
             NormalRoom(string name);
             //void rotate();
             void action(Character* character);
+            void item_impact(string item);
 	};
 }
 

@@ -26,6 +26,7 @@ namespace cube
         WaterRoom(string name);
         //void rotate();
         void action(Character* c);
+        void item_impact(string item);
 	};
 }
 

@@ -21,6 +21,7 @@ namespace cube
 		void setup();
         void setup_cube_structure();
         void setup_items();
+        void setup_characters();
 		bool finished();
 
         vector<Room*> cube;
@@ -30,7 +31,7 @@ namespace cube
         typedef void (Game::*pfunc)(void);
         std::map<std::string, Game::pfunc> commands;
         
-        bool is_finished;
+        bool has_fifth_element;
         bool is_exit;
         std::vector<std::string> tokens;
         void processCommand();
@@ -42,6 +43,7 @@ namespace cube
         void pickup();
         void rotate();
         void go();
+        void use();
         
 		public:
 			Game();

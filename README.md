@@ -52,12 +52,20 @@ Items that will be available soon:
 	
 	- fire_items:
 		- matches
+		- diamonds
 	
 	- earth_items:
 		- seeds
+			-evolves to:
+				- tree
+				- diamonds
+				- dust
+				- bubbles
+		- tree
 	
 	- air_items:
 		- feather
+		- dust
 	
 	-water_items:
 		- bubbles
@@ -69,12 +77,14 @@ Actions available:
 	
 	- go -- moves the player in a specified direction, and changing current room if allowed.
 
-Actions that will be available soon:
-	
 	- pickup -- pickup an item from the current room and store in your backpack
 	
 	- drop -- drops an item from your backpack into the current room
+
+Actions that will be available soon:
 	
 	- use -- Use an item...
+
+	- blow
 	
 	- talk -- Talk spells or something you have learned to create and merge items

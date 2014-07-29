@@ -24,24 +24,35 @@ namespace cube
 	};
     
 	string Room::description(){
-        std::string doors = "\nThe exits you've got are: ";
+        std::string doors = "\nThe exits int this room are: ";
         int m_doors_size = m_doors.size();
         for (int i = 0; i < m_doors_size-1; ++i) {
             doors += direction_description[m_doors[i]] + ", "; //lookup from enum map
         }
         doors +=  direction_description[m_doors[m_doors_size-1]];
         
-        std::string items = "\nThe Items you've got are: ";
+        std::string items = "\nThe Items in this room are: ";
         std::map<string,Item*>::iterator it = m_items.begin();
         for (it=m_items.begin(); it!=m_items.end(); ++it){
             items += it->first + ", ";
         }
-        return m_description + doors + items;
+        
+        std::string characters = "\n The characters in this room are";
+        std::map<string,Character*>::iterator char_it = m_characters.begin();
+        for (char_it=m_characters.begin(); char_it!=m_characters.end(); ++char_it){
+            characters += char_it->first + ", ";
+        }
+        
+        return m_description + doors + items + characters;
 	};
     
     const vector<int> Room::doors() const{
         return m_doors;
     };
+    
+    string Room::what_type_of_room(){
+        return type_of_room;
+    }
     
 	bool Room::enter(Character* c){
         
@@ -49,20 +60,21 @@ namespace cube
         pair<std::map<string,Character*>::iterator,bool> ret;
         ret = m_characters.insert(pair<string,Character*>(c->name(), c));
         
-        //room action will happen, and
+        //room action will happen, on character or and on room itself
         cout << "Greetings " << c->name() << ", ";
         this->action(c);
 		return ret.second; //??? true if inserted, false if already existed or
 	};
 	bool Room::leave(Character* c){
         m_characters.erase(c->name());
-        //room action will happen
+        //room action will happen on character or on room itself...
         this->action(c);
 		return true; //TODO check this
 	};
 
     bool Room::add_item(Item* item){
         //cout << "add item" << endl;
+        //If a special item is added, rooms internal structure changes...
         pair<std::map<string,Item*>::iterator,bool> ret;
         ret = m_items.insert(pair<string,Item*>(item->name(), item));
         return ret.second;
@@ -72,11 +84,17 @@ namespace cube
     Item* Room::remove_item(string item){
         cout << "remove item " << item <<endl;
         std::map<string, Item*>::iterator it = m_items.find(item);
+        //Todo remove if found
         Item* return_value = it->second;
         m_items.erase(it);
         return return_value;
     }
 
+    bool Room::contains_item(string item){
+        std::map<string, Item*>::iterator it = m_items.find(item);
+        return it != m_items.end();
+    }
+    
     void Room::rotate(int direction){
         //TODO, each room will rotate differently to give maximum confusion
         switch(direction){

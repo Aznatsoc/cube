@@ -25,6 +25,7 @@ namespace cube
         std::vector<int> m_room_neighbour_id;
         vector<int> m_doors;
         static const string direction_description[];
+        string type_of_room;
 
 	public:
         Room();
@@ -41,9 +42,13 @@ namespace cube
 
         bool add_item(Item* item);
 		Item* remove_item(string item);
+        bool contains_item(string item);
 
 		void rotate(int direction);
         virtual void action(Character* c) = 0;
+        virtual void item_impact(string item) = 0;
+        
+        string what_type_of_room();
 	};
 }
 #endif
