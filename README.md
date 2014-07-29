@@ -48,6 +48,9 @@ Characters that will be available soon:
 ====
 Items
 
+	- seeds
+	- fifth_element
+
 Items that will be available soon:
 	
 	- fire_items:
@@ -81,10 +84,10 @@ Actions available:
 	
 	- drop -- drops an item from your backpack into the current room
 
-Actions that will be available soon:
-	
 	- use -- Use an item...
 
-	- blow
+Actions that will be available soon:
+
+	- blow - make air..
 	
-	- talk -- Talk spells or something you have learned to create and merge items
+	- talk -- Talk to a character
