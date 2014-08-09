@@ -3,12 +3,13 @@
 
 
 
-#include "fire_room.h"
-#include "earth_room.h"
-#include "air_room.h"
-#include "water_room.h"
-#include "normal_room.h"
-//#include "character.h"
+#include "Rooms/fire_room.h"
+#include "Rooms/earth_room.h"
+#include "Rooms/air_room.h"
+#include "Rooms/water_room.h"
+#include "Rooms/normal_room.h"
+#include "Characters/air_human.h"
+#include "Characters/animal.h"
 #include "item.h"
 #include <iostream>
 #include <vector>
@@ -18,40 +19,60 @@
 namespace cube
 {
 	class Game{
+        //setup
 		void setup();
         void setup_cube_structure();
         void setup_items();
         void setup_characters();
-		bool finished();
-
+        void welcome_the_game();
+        void setup_player();
+        void setup_commands();
+        
+        //variables to be accessed in game
         vector<Room*> cube;
-        Character* player;
-        std::map<std::string, int> directions;
+        Human* player;
         
-        typedef void (Game::*pfunc)(void);
-        std::map<std::string, Game::pfunc> commands;
-        
+        //finish
+		bool finished();
         bool has_fifth_element;
+        void create_fifth_element();
+        
+        //Command helpers
+        void processCommand();
+        void error_input_handler(string command);
         bool is_exit;
         std::vector<std::string> tokens;
-        void processCommand();
-        bool validate_if_next_argument();
+        std::map<std::string, int> directions;
         
         //commands
+        typedef void (Game::*pfunc)(void);
+        std::map<std::string, Game::pfunc> commands;
+        std::map<std::string, Game::pfunc> learnable_commands;
+        
+        typedef void (Game::*pfunc_args)(string);
+        std::map<std::string, Game::pfunc_args> commands_with_arguments;
+        //std::map<std::string, Game::pfunc_args> learnable_commands_with_arguments;
+        
         void exit();
-        void drop();
-        void pickup();
         void rotate();
-        void go();
-        void use();
+        void health();
+        
+        void go(string direction);
+        void use(string item_name);
+        void talk(string character_name);
+        void drop(string item_name);
+        void pickup(string item_name);
+        
+        //Learnable commands
+        void blow();
+        
+        //void whisper(string character_name);
         
 		public:
 			Game();
 			~Game();
 			void play();
-            vector<Room*> get_cube(); //for testing
-            Character* get_player(); //for testing
-        
+            Character* get_player();
 	};
 }
 #endif

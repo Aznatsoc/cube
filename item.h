@@ -16,6 +16,8 @@ namespace cube
             Item(string name);
             ~Item();
             string name() const;
+            string evolve(string element);
+            //affect room information, for room to use
 		
     };
 }

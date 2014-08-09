@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sstream>
+#include "unistd.h"
 
 
 namespace cube
@@ -33,131 +34,216 @@ namespace cube
        // delete player;
 	};
 
+    Character* Game::get_player(){
+        return player;
+    }
 	void Game::play(){
         has_fifth_element = false;
         is_exit = false;
+        
         while(!finished() && !is_exit){
-            Room* tmp_room =player->current_room();
-            string tmp_str = tmp_room->description();
-            cout << "You are in room: " << tmp_str <<endl;
-            
+            cout <<player->current_room()->description()<<endl;//todo maybe move
             processCommand(); // Create vector to hold our words
         
             if (tokens.size() < 1) {
                 continue;
+            }else if(tokens.size() == 2){ //there is a second argument specified
+                std::map<string, Game::pfunc_args>::iterator command_arg_it =commands_with_arguments.find(tokens[0]);
+                if(command_arg_it != commands_with_arguments.end()){
+                    pfunc_args f = command_arg_it->second;
+                    (this->*f)(tokens[1]);
+                }
+            }else{
+                std::map<string, Game::pfunc>::iterator command_it = commands.find(tokens[0]);
+                if(command_it != commands.end()){
+                    pfunc f = command_it->second;
+                    (this->*f)();
+                }else{
+                    error_input_handler(tokens[0]);
+                }
             }
-            pfunc f = commands[tokens[0]]; //todo check that it is a valid command
-            (this->*f)();
+            cout << player->backpack_description()<<endl;
+            
+            if(!has_fifth_element){
+                create_fifth_element(); //try to create fifth element
+            }
         }
 	};
+    
+    void Game::error_input_handler(string command){
+        if(command == "use" || command == "drop" || command == "pickup"  ){
+            cout << "You need to specify which item to "  << command<< endl;
+        }else if(command == "go"){
+            cout << "You need to specify in what direction to "  << command<< endl;
+        }else{
+            cout << "did not recognize command" << endl; //todo print all possible commands
+            
+        }
+    }
     
     void Game::exit(){
         cout << "Thanks for playing!"<<endl;
         is_exit = true;
+        //remove game??
     }
-    
-    void Game::drop(){
-        cout << "drop function are called"<<endl;
-        if (validate_if_next_argument()) {
-            Item* item = player->remove_item(tokens[1]);
-            //todo check items not in backpack
-            player->current_room()->add_item(item);
-            cout << player->backpack_description()<<endl;
-        }else{
-            cout << "You need to specify what object to drop" << endl;
-        }
-    }
-    
-    void Game::pickup(){
-        cout << "pickup function are called"<<endl;
-        if (validate_if_next_argument()) {
-            Item* item = player->current_room()->remove_item(tokens[1]);
-            //todo pickup items not in room
-            player->add_item(item);
-            cout << player->backpack_description()<<endl;
-        }else{
-            cout << "You need to specify what object to pickup" << endl;
-        }
-
-    }
-    
+        
     void Game::rotate(){
-        cout << "rotate function are called"<<endl;
-        if (validate_if_next_argument()) {
-            map<string, int>::iterator direction_it = directions.find(tokens[1]);
-            if(direction_it != directions.end()){
-                int dir = direction_it->second;
-                player->current_room()->rotate(dir);
-            }else{
-                cout << "The direction you are trying to rotate in does not exist, misspelled?" << endl;
-            }
+        player->current_room()->rotate();
+    }
+    
+    void Game::drop(string item_name){
+        
+        Item* item = player->remove_item(item_name); //todo how to see that the remove was correct?
+        if(item != NULL){
+            player->current_room()->add_item(item);
+            
         }else{
-            cout << "Rotate demands a direction too, please try again!" << endl;
+            cout << item_name << " does not exist in your backpack!" << endl;
         }
+        cout << player->backpack_description()<<endl;
+    }
+    
+    void Game::pickup(string item_name){
+        Item* item = player->current_room()->remove_item(item_name); //todo how to see that the remove was correct?
+        player->add_item(item);
+        cout << player->backpack_description()<<endl;
+    }
+    
+    void Game::go(string direction){
+        map<string, int>::iterator direction_it = directions.find(direction);
+        if(direction_it != directions.end()){
+            int dir = direction_it->second;
+            player->go(dir);
+        }else{
+            cout << "This is not a direction, misspelled?" << endl;
+        }
+    }
+    
+    void Game::use(string item_name){
+        Item* item = player->remove_item(item_name); //todo how to see that the remove was correct, aka error input handling?
+           if(item != NULL){ //todo best practise to return null???
+               if(item->name() == "fifth_element"){
+                   has_fifth_element = true;
+               }else{
+                   try {
+                       string evolve_name = item->evolve(player->current_room()->type());
+                        Item* evolve_item = new Item(evolve_name);
+                        player->current_room()->add_item(evolve_item);
+                   }catch(string e){
+                        cout << "why not here???"<<endl;
+                        cout << e << endl;
+                   }
+               }
+               delete item;
+               
+           }else{
+               cout << "The item did not exists" << endl;
+           }
+            //todo check if null, aka the item did not exist in the container
+           
+           
+            //todo
+            //impact character
 
-    }
-    
-    void Game::go(){
-        cout << "go function are called"<<endl;
-        if (validate_if_next_argument()) {
-            map<string, int>::iterator direction_it = directions.find(tokens[1]);
-            if(direction_it != directions.end()){
-                int dir = direction_it->second;
-                player->go(dir);
-            }else{
-                cout << "The direction you are trying to enter does not exist, misspelled?" << endl;
-            }
-        }else{
-            cout << "go demands a direction too, please try again!" << endl;
-        }
-    }
-    
-    void Game::use(){
-        if (validate_if_next_argument()) {
-            Item* item = player->remove_item(tokens[1]);
-            if(item->name() == "seeds" && player->current_room()->what_type_of_room() == "earth"){
-                Item* tree = new Item("tree");
-                player->current_room()->add_item(tree);
-                cout << "You have planted a tree in this room"<<endl;
-                delete item;
-            }
-            else if(item->name() == "seeds" && player->current_room()->what_type_of_room() == "normal"){
-                Item* tree = new Item("fifth_element");
-                player->current_room()->add_item(tree);
-                cout << "You have created the fifth_element"<<endl;
-                delete item;
-            }
-            else if(item->name() == "fifth_element"){
-                has_fifth_element = true;
-            }
+           
             //stuff should happen
+    }
+    
+    void Game::blow(){
+        cout << "You are blowing!" << endl;
+        if(player->current_room()->type() == "air"){
+            AirRoom* air_room = (AirRoom*) player->current_room();
+           air_room->change_wind(100);
+            cout << "The wind in this room is up to " << air_room->wind()<<" m/s"<<endl;
+        }else if(player->current_room()->type() == "fire"){
+            //increase fire and make it dangerous
         }else{
-            cout << "use demands an item to be used, please specify!" << endl;
+            cout << "But nothing happens..." <<endl;
         }
     }
-    bool Game::validate_if_next_argument(){
-        return (tokens.size() == 2);
+    
+    void Game::health(){
+        cout << "You current health is at astonishing: " <<  player->life()<< endl;
+    }
+    
+    void Game::talk(string character_name){
+            Character* character = player->current_room()->get_character(character_name); //todo read only for type so to access talk
+            //TODO if character does not exist...
+            string learnable_command = character->communicate(player);; // and not allways do you learn commands!!
+            
+            //TODO TODO
+            if(learnable_command == "blow"){
+                cout << "You have learned to make air!! You can increase wind power!" << endl;
+                std::map<string, Game::pfunc>::iterator learn_it = learnable_commands.find(learnable_command);
+                if(learn_it != learnable_commands.end()){
+                    commands[learnable_command] = learn_it->second;//todo move learned function from learnable<#statements#>_commands map to commands
+                }
+            }else{
+                cout << learnable_command << endl;
+            }
+    }
+    
+    void Game::create_fifth_element(){
+        Room* current_room = player->current_room();
+        if(current_room->type() == "air"){
+            AirRoom* air_room = (AirRoom*) current_room; //Todo, only want to cast
+            if(air_room->wind() >= 500 && current_room->contains_item("fire") && current_room->contains_item("bubbles") && current_room->contains_item("dust")){
+                cout << "You have creted the fifth element!!" << endl;
+                Item* fifth_element = new Item("fifth_element");
+                player->add_item(fifth_element);
+            }
+        }
     }
 
 	void Game::setup(){
         setup_cube_structure();
-        //items
         setup_items();
         setup_characters();
-        //characters
-        Room* currentRoom = cube[0]; //start game in this room
-        player = new Character("Bengan", currentRoom); // TODO ask name and stuff
-        cout<< "before enter room" << endl;
-        currentRoom->enter(player);
-        
-        commands["exit"] = &Game::exit;
-        commands["drop"] = &Game::drop;
-        commands["pickup"] = &Game::pickup;
-        commands["rotate"] = &Game::rotate;
-        commands["go"] = &Game::go;
-        commands["use"] = &Game::use;
-
+        //welcome_the_game();
+        setup_player();
+        setup_commands();
     };
+    
+    void Game::setup_commands(){
+        commands["exit"] = &Game::exit;
+        commands["rotate"] = &Game::rotate;
+        commands["health"] = &Game::health;
+        
+        commands_with_arguments["go"] = &Game::go;
+        commands_with_arguments["use"] = &Game::use;
+        commands_with_arguments["talk"] = &Game::talk;
+        commands_with_arguments["drop"] = &Game::drop;
+        commands_with_arguments["pickup"] = &Game::pickup;
+        
+        learnable_commands["blow"] = &Game::blow;
+        
+        //learnable_commands_with_arguments["whisper"] = &Game::whisper;
+    }
+    
+    void Game::welcome_the_game(){
+        cout <<"Welcome to the cube!"<<endl;
+        cout <<"We will begin your body upload in..."<<endl;
+        for (int i=5; i > 0; --i)
+        {
+            sleep(1);
+            printf("%d...", i);
+            fflush(stdout);
+        }
+        sleep(1);
+        printf("\n");
+        cout << "* °' *°'~ *~"<<endl;
+        sleep(1);
+
+    }
+    
+    void Game::setup_player(){
+        //cout <<"What is your name, body?"<<endl;
+        //processCommand();
+        Room* currentRoom = cube[0]; //start game in this room
+        string name = "lovisa";//tokens[0];
+        player = new Air_human(name, currentRoom, "player"); // TODO ask name and stuff
+        currentRoom->enter(player);
+    }
     
     void Game::setup_cube_structure(){
         //create cube of 4 fire_rooms...
@@ -213,25 +299,30 @@ namespace cube
     
     void Game::setup_items(){
         cout << "Before itemz"<< endl;
-        Item *item = new Item("seeds");
-        cube[0]->add_item(item);
+        Item *seeds = new Item("seeds");
+        Item *seeds2 = new Item("seeds");
+        cube[0]->add_item(seeds);
+        cube[1]->add_item(seeds2);
+        
+        Item *bubbles = new Item("bubbles");
+        cube[0]->add_item(bubbles);
     }
     
     void Game::setup_characters(){
         cout << "Before characters" << endl;
-        Character *casper = new Character("casper", cube[0]);
-        cube[0]->enter(casper);
+        Human *wright = new Air_human("Wright", cube[0], "aviator");
+        cube[0]->enter(wright);
+        
+        Animal *bo = new Animal("Bo", cube[0], "snake");
+        cube[0]->enter(bo);
     }
-    vector<Room*> Game::get_cube(){
-        return cube;
-    };
-    
-    Character* Game::get_player(){
-        return player;
-    }
+
 	bool Game::finished(){
-        if(player->current_room()->what_type_of_room() == "normal" && has_fifth_element){
+        if(player->current_room()->type() == "normal" && has_fifth_element){
             cout << "You won the game!!!" << endl;
+            return true;
+        }else if(player->life() <= 0){
+            cout << "You died with 90% burns" << endl;
             return true;
         }
         return false;
