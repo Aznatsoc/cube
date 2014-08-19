@@ -1,0 +1,7 @@
+Spelet krashar när man försöker använda ett item förutom seeds, t.ex. bubbles
+
+Om man plockar upp två likadana föremål försvinner detta, detsamma gäller om man droppar två likadana föremål i rummet (funktionen försvann vid merge)
+
+Inget felmeddelande om man gör ett kommando på två ord som inte finns
+
+Om man försöker plocka upp ett föremål som inte finns blir det segmentation fault
