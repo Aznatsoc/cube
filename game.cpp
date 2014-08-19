@@ -40,11 +40,15 @@ namespace cube
 	void Game::play(){
         has_fifth_element = false;
         is_exit = false;
-        
+        look();
+        cout << endl;
+
         while(!finished() && !is_exit){
-            cout <<player->current_room()->description()<<endl;//todo maybe move
+        	cout << ">";
             processCommand(); // Create vector to hold our words
         
+            cout << endl;
+
             if (tokens.size() < 1) {
                 continue;
             }else if(tokens.size() == 2){ //there is a second argument specified
@@ -62,7 +66,9 @@ namespace cube
                     error_input_handler(tokens[0]);
                 }
             }
-            cout << player->backpack_description()<<endl;
+
+            cout << endl;
+
             
             if(!has_fifth_element){
                 create_fifth_element(); //try to create fifth element
@@ -76,7 +82,7 @@ namespace cube
         }else if(command == "go"){
             cout << "You need to specify in what direction to "  << command<< endl;
         }else{
-            cout << "did not recognize command" << endl; //todo print all possible commands
+            cout << "Sorry, did not recognize the command '" << command  << "'" << endl; //todo print all possible commands
             
         }
     }
@@ -85,6 +91,34 @@ namespace cube
         cout << "Thanks for playing!"<<endl;
         is_exit = true;
         //remove game??
+    }
+
+    void Game::help() {
+    	std::string help_text = "\nSo you need help buddy?, the availible commands without arguments are: ";
+
+        std::map<std::string, Game::pfunc>::iterator it = commands.begin();
+
+        for (it=commands.begin(); it!=commands.end(); ++it){
+            help_text += it->first + ", ";
+        }
+        
+        std::map<std::string, Game::pfunc_args>::iterator it2 = commands_with_arguments.begin();
+        
+        help_text += "\nCommands with arguments are: ";
+
+         for (it2=commands_with_arguments.begin(); it2!=commands_with_arguments.end(); ++it2){
+            help_text += it2->first + ", ";
+        }
+        cout << help_text << endl;
+    }
+
+    void Game::inventory() {
+    	cout << player->backpack_description()<<endl;
+    }
+
+    void Game::look() {
+    	cout << player->current_room()->description() << endl;
+
     }
         
     void Game::rotate(){
@@ -102,6 +136,7 @@ namespace cube
         }
         cout << player->backpack_description()<<endl;
     }
+
     
     void Game::pickup(string item_name){
         Item* item = player->current_room()->remove_item(item_name); //todo how to see that the remove was correct?
@@ -169,6 +204,12 @@ namespace cube
     void Game::talk(string character_name){
             Character* character = player->current_room()->get_character(character_name); //todo read only for type so to access talk
             //TODO if character does not exist...
+
+            if(character == nullptr) {		// Error handling if character does not exist in the room
+            	cout << "The character " << character_name << " does not exist in this room, what are you? Blind?" << endl;
+            	return;
+            }
+
             string learnable_command = character->communicate(player);; // and not allways do you learn commands!!
             
             //TODO TODO
@@ -208,6 +249,9 @@ namespace cube
         commands["exit"] = &Game::exit;
         commands["rotate"] = &Game::rotate;
         commands["health"] = &Game::health;
+        commands["help"] = &Game::help;
+        commands["inventory"] = &Game::inventory;
+        commands["look"] = &Game::look;
         
         commands_with_arguments["go"] = &Game::go;
         commands_with_arguments["use"] = &Game::use;
